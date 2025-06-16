@@ -38,7 +38,7 @@ resource "aws_iam_role_policy" "sftp_user_policy" {
   name = "${each.key}-sftp-policy"
   role = aws_iam_role.sftp_user_roles[each.key].id
 
-  policy = file("${path.root}/policies/${each.key}.json")
+  policy = file("${path.root}/policies/${each.key}_policy.json")
 }
 
 
