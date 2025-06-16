@@ -1,6 +1,31 @@
+resource "aws_cloudwatch_log_group" "transfer" {
+  name = "/aws/transfer/Test-Terraform"
+  retention_in_days = 30
+}
+
+data "aws_iam_policy_document" "transfer_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["transfer.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "iam_for_transfer" {
+  name_prefix         = "iam_for_transfer_"
+  assume_role_policy  = data.aws_iam_policy_document.transfer_assume_role.json
+  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSTransferLoggingAccess"]
+}
+
 # AWS Transfer Server
 resource "aws_transfer_server" "sftp_server" {
   endpoint_type = var.endpoint_type
+  logging_role  = aws_iam_role.iam_for_transfer.arn
 
   endpoint_details {
     subnet_ids = var.subnet_ids
@@ -8,6 +33,10 @@ resource "aws_transfer_server" "sftp_server" {
   }
 
   protocols = ["SFTP"]
+
+  structured_log_destinations = [
+    "${aws_cloudwatch_log_group.transfer.arn}:*"
+  ]
 
   tags = {
     Name = "Test-Terraform"
