@@ -1,15 +1,27 @@
 module "sftp_users" {
-  source = "./modules/transfer_family_server"
+  for_each = var.sftp_users
+  source   = "./modules/transfer_family_user"
 
-  sftp_users = {
-    "sftp-user" = {
-      ssh_key_path = "~/.ssh/id_rsa.pub"
-    },
-    "jsone" = {
-      ssh_key_path = "~/.ssh/jsone_id_ed25519.pub"
-    }
-  }
+  user_name        = each.key
+  ssh_key_paths = [
+    "keys/user_key1.pub",
+    "keys/user_key2.pub"
+  ]
+  policy_file_path = each.value.policy_file_path
+  home_directory   = "/${each.key}"
+  region           = each.region
+  project          = each.project
+  enable_upload = each.enable_upload
+  enable_delete = each.enable_delete
+  enable_download = each.enable_download
+  enable_list = each.enable_list
+}
 
-  subnet_ids = ["subnet-0026b807c26af61bd", "subnet-012f7d74fb7832e09"]
-  vpc_id = "vpc-0fb9fcfc894331bed"
+module "sftp_server" {
+  source   = "./modules/transfer_family_server"
+
+  subnet_ids = var.subnet_ids
+  vpc_id = var.vpc_id
+  transfer_server_name = var.transfer_server_name
+  log_group_timestamp =  var.log_group_timestamp
 }
