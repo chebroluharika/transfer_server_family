@@ -1,18 +1,12 @@
-# # Subnet Data Sources
-# data "aws_subnet" "selected" {
-#   id = "subnet-012f7d74fb7832e09"
-# }
+data "aws_iam_policy_document" "transfer_assume_role" {
+  statement {
+    effect = "Allow"
 
-# data "aws_subnet" "selected1" {
-#   id = "subnet-0026b807c26af61bd"
-# }
+    principals {
+      type        = "Service"
+      identifiers = ["transfer.amazonaws.com"]
+    }
 
-# # VPC Data Source
-# data "aws_vpc" "selected" {
-#   id = "vpc-0fb9fcfc894331bed"
-# }
-
-# # IAM Role Data Source
-# data "aws_iam_role" "transfer_family_role" {
-#   name = "april-ezyinvoice-sftp"
-# }
+    actions = ["sts:AssumeRole"]
+  }
+}

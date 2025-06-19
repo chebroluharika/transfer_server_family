@@ -1,26 +1,14 @@
 resource "aws_cloudwatch_log_group" "transfer" {
-  name = "/aws/transfer/Test-Terraform"
-  retention_in_days = 30
-}
-
-data "aws_iam_policy_document" "transfer_assume_role" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["transfer.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
+  name = "${var.transfer_server_name}-loggroup-${var.log_group_timestamp}"
+  retention_in_days = var.retention_in_days
 }
 
 resource "aws_iam_role" "iam_for_transfer" {
-  name_prefix         = "iam_for_transfer_"
+  name_prefix         = "iam_role_for_transfer_${var.transfer_server_name}"
   assume_role_policy  = data.aws_iam_policy_document.transfer_assume_role.json
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSTransferLoggingAccess"]
 }
+
 
 # AWS Transfer Server
 resource "aws_transfer_server" "sftp_server" {
@@ -39,54 +27,6 @@ resource "aws_transfer_server" "sftp_server" {
   ]
 
   tags = {
-    Name = "Test-Terraform"
+    Name = var.transfer_server_name
   }
-}
-
-# Create IAM role for each user
-resource "aws_iam_role" "sftp_user_roles" {
-  for_each = var.sftp_users
-
-  name = "${each.key}-sftp-role"
-
-  assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "transfer.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy" "sftp_user_policy" {
-  for_each = var.sftp_users
-
-  name = "${each.key}-sftp-policy"
-  role = aws_iam_role.sftp_user_roles[each.key].id
-
-  policy = file("${path.root}/policies/${each.key}_policy.json")
-}
-
-
-# Create SFTP Users
-resource "aws_transfer_user" "users" {
-  for_each = var.sftp_users
-
-  server_id      = aws_transfer_server.sftp_server.id
-  user_name      = each.key
-  role           = aws_iam_role.sftp_user_roles[each.key].arn
-  home_directory = var.home_directory
-}
-
-# Create SFTP SSH Keys
-resource "aws_transfer_ssh_key" "ssh_keys" {
-  depends_on = [ aws_transfer_user.users ]
-  for_each = var.sftp_users
-
-  server_id = aws_transfer_server.sftp_server.id
-  user_name = each.key
-  body      = file(each.value.ssh_key_path)
 }

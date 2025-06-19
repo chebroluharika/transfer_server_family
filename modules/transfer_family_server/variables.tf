@@ -1,17 +1,3 @@
-variable "sftp_users" {
-  type = map(object({
-    ssh_key_path = string
-  }))
-  description = "Map of SFTP usernames to their SSH public key file paths"
-}
-
-
-variable "home_directory" {
-  description = "Home directory path for the SFTP users"
-  type        = string
-  default     = "/april-easyinvoice-sftp-bucket/easyinvoice"
-}
-
 variable "endpoint_type" {
   default = "VPC"
   type = string
@@ -25,4 +11,20 @@ variable "vpc_id" {
 variable "subnet_ids" {
   default = []
   type = list(string)
+}
+
+
+variable "transfer_server_name" {
+  default = "Test-terraform"
+  type = string
+}
+
+variable "retention_in_days" {
+  default = 30
+  type = number
+}
+
+variable "log_group_timestamp" {
+  description = "Timestamp suffix for log group name"
+  type        = string
 }
