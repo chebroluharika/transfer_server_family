@@ -35,7 +35,7 @@ resource "aws_iam_role_policy" "sftp_user_policies" {
   name = "dataex-${var.region}-${var.project}-${each.value.user_name}-${each.value.policy_type}-sftp-policy"
   role = aws_iam_role.sftp_user_roles[each.value.user_name].id
 
-  policy = file("${path.module}/policies/${each.value.policy_type}.json")
+  policy = file("${path.module}/policies/${each.value.policy_type}_policy.json")
 }
 
 # Create SFTP Users
