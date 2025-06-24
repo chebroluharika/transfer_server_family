@@ -6,7 +6,6 @@ variable "sftp_users" {
     region            = string
     project           = string
     enable_upload   = bool
-    enable_list     = bool
     enable_delete   = bool
     enable_download = bool
   }))

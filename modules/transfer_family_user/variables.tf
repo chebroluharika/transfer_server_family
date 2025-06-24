@@ -7,7 +7,6 @@ variable "home_directory" {
 variable "sftp_users" {
   type = map(object({
     enable_upload   = bool
-    enable_list     = bool
     enable_delete   = bool
     enable_download = bool
   }))
@@ -36,21 +35,21 @@ variable "policy_file_path" {
 }
 
 variable "enable_upload" {
-  default = true
+  default = false
   type = bool
 }
 
 variable "enable_download" {
-    default = true
+    default = false
     type = boolean
 }
 
 variable "enable_delete" {
-    default = true
+    default = false
     type = boolean
 }
 
-variable "enable_list" {
-    default = true
-    type = boolean
+variable "policy_types" {
+  default = ["list"]
+  type = list()
 }

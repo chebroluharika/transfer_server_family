@@ -1,9 +1,8 @@
 locals {
-  policy_types = ["upload", "list", "delete", "download"]
 
   user_policy_combinations = merge([
     for user_key, user_config in var.sftp_users : {
-      for policy_type in local.policy_types :
+      for policy_type in var.policy_types :
       "${user_key}-${policy_type}" => {
         user_name   = user_key
         policy_type = policy_type

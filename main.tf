@@ -14,7 +14,8 @@ module "sftp_users" {
   enable_upload = each.enable_upload
   enable_delete = each.enable_delete
   enable_download = each.enable_download
-  enable_list = each.enable_list
+  sftp_users = var.sftp_users
+  policy_types = ["upload", "list", "delete", "download"]
 }
 
 module "sftp_server" {
