@@ -4,14 +4,6 @@ variable "home_directory" {
   default     = "/april-easyinvoice-sftp-bucket/easyinvoice"
 }
 
-variable "sftp_users" {
-  type = map(object({
-    enable_upload   = bool
-    enable_delete   = bool
-    enable_download = bool
-  }))
-}
-
 
 variable "user_name" {
   type = string

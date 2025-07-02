@@ -1,15 +1,17 @@
 locals {
+  enable_flags = {
+    download = var.enable_download
+    upload   = var.enable_upload
+    delete   = var.enable_delete
+  }
 
-  user_policy_combinations = merge([
-    for user_key, user_config in var.sftp_users : {
-      for policy_type in var.policy_types :
-      "${user_key}-${policy_type}" => {
-        user_name   = user_key
-        policy_type = policy_type
-      }
-      if lookup(user_config, "enable_${policy_type}", false)
+  user_policy_combinations = {
+    for policy_type in var.policy_types :
+    policy_type => {
+      policy_type = policy_type
     }
-  ]...)
+    if lookup(local.enable_flags, policy_type, false)
+  }
 }
 
 # Create IAM role for each user
