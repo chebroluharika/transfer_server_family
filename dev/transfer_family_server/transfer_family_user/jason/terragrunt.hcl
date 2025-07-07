@@ -3,11 +3,11 @@ include {
 }
 
 dependency "transfer_family_server" {
-  config_path = "../transfer_family_server"
+  config_path = "../../transfer_family_server"
 }
 
 terraform {
-  source = "../modules/transfer_family_user"
+  source = "../../../modules/transfer_family_user"
 }
 
 inputs = {

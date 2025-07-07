@@ -4,6 +4,10 @@ variable "home_directory" {
   default     = "/april-easyinvoice-sftp-bucket/easyinvoice"
 }
 
+variable "server_id" {
+  description = "Id of the Transfer Family server"
+  type        = string
+}
 
 variable "user_name" {
   type = string

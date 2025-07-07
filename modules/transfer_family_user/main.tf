@@ -42,7 +42,7 @@ resource "aws_iam_role_policy" "sftp_user_policies" {
 # Create SFTP Users
 resource "aws_transfer_user" "users" {
     depends_on = [ aws_transfer_server.sftp_server ]
-    server_id      = aws_transfer_server.sftp_server.id
+    server_id      =var.server_id
     user_name      = "dataex-${var.region}-${var.project}-${var.user_name}"
     role           = aws_iam_role.sftp_user_role.arn
     home_directory = var.home_directory
@@ -56,7 +56,7 @@ resource "aws_transfer_ssh_key" "ssh_keys" {
 
   depends_on = [aws_transfer_user.user]
 
-  server_id = aws_transfer_server.sftp_server.id
+  server_id =var.server_id
   user_name = "dataex-${var.region}-${var.project}-${var.user_name}"
   body      = file(each.value)
 }
