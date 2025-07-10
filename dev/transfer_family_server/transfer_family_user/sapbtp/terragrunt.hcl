@@ -7,7 +7,7 @@ dependency "transfer_family_server" {
 }
 
 terraform {
-  source = "../../../modules/transfer_family_user"
+  source = "git::https://github.com/RGE-Digital/terraform-module-aws-transfer-server.git//transfer-family-user?ref=terraform-module-aws-transfer-server"
 }
 
 inputs = {
