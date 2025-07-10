@@ -4,7 +4,7 @@ include {
 }
 
 terraform {
-  source = "../modules/transfer_family_user"
+  source = "git::https://github.com/RGE-Digital/terraform-module-aws-transfer-server.git//transfer-family-server?ref=terraform-module-aws-transfer-server"
 }
 
 inputs = {
