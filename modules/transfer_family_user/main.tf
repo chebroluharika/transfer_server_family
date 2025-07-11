@@ -33,16 +33,18 @@ resource "aws_iam_role" "sftp_user_roles" {
 resource "aws_iam_role_policy" "sftp_user_policies" {
   for_each = local.user_policy_combinations
 
-  name = "dataex-${var.region}-${var.project}-${each.value.user_name}-${each.value.policy_type}-sftp-policy"
-  role = aws_iam_role.sftp_user_roles[each.value.user_name].id
+  name = "dataex-${var.region}-${var.project}-${var.user_name}-${each.value.policy_type}-sftp-policy"
+  role = aws_iam_role.sftp_user_roles.id
 
-  policy = file("${path.module}/policies/${each.value.policy_type}_policy.json")
+  policy = templatefile("${path.module}/policies/${each.value.policy_type}_policy.json.tpl", {
+    bucket_name = var.bucket_name
+  })
 }
+
 
 # Create SFTP Users
 resource "aws_transfer_user" "users" {
-    depends_on = [ aws_transfer_server.sftp_server ]
-    server_id      =var.server_id
+    server_id      = var.server_id
     user_name      = "dataex-${var.region}-${var.project}-${var.user_name}"
     role           = aws_iam_role.sftp_user_role.arn
     home_directory = var.home_directory
@@ -54,9 +56,7 @@ resource "aws_transfer_ssh_key" "ssh_keys" {
     for idx, path in var.ssh_key_paths : idx => path
   }
 
-  depends_on = [aws_transfer_user.user]
-
-  server_id =var.server_id
+  server_id = var.server_id
   user_name = "dataex-${var.region}-${var.project}-${var.user_name}"
   body      = file(each.value)
 }

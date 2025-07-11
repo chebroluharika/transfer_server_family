@@ -21,6 +21,10 @@ variable "region" {
   type = string
 }
 
+variable "bucket_name" {
+  type = string
+}
+
 variable "ssh_key_paths" {
   description = "List of SSH public key file paths for the user"
   type        = list(string)
