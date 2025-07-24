@@ -1,16 +1,14 @@
 locals {
-  enable_flags = {
-    download = var.enable_download
-    upload   = var.enable_upload
-    delete   = var.enable_delete
-  }
-
   user_policy_combinations = {
-    for policy_type in var.policy_types :
-    policy_type => {
-      policy_type = policy_type
+    for op, enabled in {
+      upload   = var.enable_upload
+      download = var.enable_download
+      delete   = var.enable_delete
+    } : 
+    op => {
+      policy_type = op
     }
-    if lookup(local.enable_flags, policy_type, false)
+    if enabled
   }
 }
 
